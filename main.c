@@ -12,11 +12,12 @@ typedef struct {
 Product warehouse[MAX_PRODUCTS];
 
 char menuOptions() {
-    char option;
+    int option;
     printf("\n--- STOCK MANAGEMENT SYSTEM ---\n"); 
-    printf("A: Add a Product\n");
-    printf("L: list of Products\n");
-    printf("E: Exit\n");
+    printf("1: Add a Product\n");
+    printf("2: list of Products\n");
+    printf("3: Search Product\n");
+    printf("0: Exit\n");
     printf("Choose an option: ");
     
     scanf(" %c", &option); 
@@ -69,31 +70,61 @@ void listProducts(Product warehouse[], int total){
     printf("--------------------------\n");
 }
 
+void searchProduct(Product warehouse[], int total){
+    int searchId;
+    int found = 0;
+
+    printf("\nEnter ID to search: ");
+    if (scanf("%d", &searchId) != 1) {
+        // This handles it if the user accidentally types a letter instead of a number
+        while (getchar() != '\n'); 
+        printf("Invalid ID format!\n");
+        return;
+    }
+    while (getchar() != '\n');
+
+    for (int i = 0; i < total; i++){
+        if(warehouse[i].id == searchId){
+            printf("\nProduct Found!");
+            printf("\n Name: %s | Stock: %d | Price: %.2f \n", warehouse[i].name, warehouse[i].stock, warehouse[i].price);
+            found = 1;
+            break;
+        }
+
+        if(!found){
+            printf("\nProduct with ID: %d not Found.\n", searchId);
+        }
+    }
+}
+
 int main() {
     int totalProducts = 0;
-    char option;
+    int option;
     do {
         option = menuOptions();
 
         switch (option) {
-            case 'A':
-            case 'a':
+            case '1':
                 addProduct(warehouse, &totalProducts);
                 break;
-            case 'E':
-            case 'e':
+            case '2':
                 printf("\nA Exiting system... GoodBye!\n");
                 break;
-            case 'L':
-            case 'l':
+            case '3':
                     listProducts(warehouse, totalProducts);
                     break;
+            case '4':
+                searchProduct(warehouse, totalProducts);
+                break;
+            case '0':
+                printf("\nExiting system... GoodBye!\n");
+                break;
             default:
                 printf("\nOption '%c' wrong! Try Again.\n", option);
                 break;
         }
 
-    } while (option != 'E' && option != 'e');
+    } while (option != '0');
 
     printf("\nExiting system... Press Enter to close.");
     int c;
