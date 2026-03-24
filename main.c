@@ -19,6 +19,7 @@ char menuOptions() {
     printf("2: list of Products\n");
     printf("3: Search Product\n");
     printf("4: Save Product File\n");
+    printf("5: Load Product File\n");
     printf("0: Exit\n");
     printf("Choose an option: ");
     
@@ -145,6 +146,30 @@ void saveFile(Product warehouse[], int total){
             printf("\nProduct with ID: %d not Found.\n", searchId);
         }
 }
+void loadProductFile(Product warehouse[], int *total){
+    char loadName[50];
+    char fullPath[64];
+
+    printf("Enter Product name to load: ");
+    scanf("%s", loadName);
+
+    strcpy(fullPath, "Products/");
+    strcat(fullPath, loadName);
+    strcat(fullPath, ".dat");
+
+    FILE *fp = fopen(fullPath, "rb");
+
+     if(fp == NULL){
+        printf("Error: file not found!\n");
+        return;
+    }
+
+    fread(&warehouse[*total], sizeof(Product), 1, fp); 
+    warehouse[*total].id = *total + 1;
+    fclose(fp);
+    (*total)++;
+    printf("Product loaded successfully!\n");
+}
 
 int main() {
     int totalProducts = 0;
@@ -164,6 +189,9 @@ int main() {
                 break;
             case '4': 
                 saveFile(warehouse, totalProducts);
+                break;
+            case '5': 
+                loadProductFile(warehouse, &totalProducts);
                 break;
             case '0':
                 printf("\nExiting system... GoodBye!\n");
