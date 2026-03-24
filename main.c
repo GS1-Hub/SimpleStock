@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_PRODUCTS 100
 
@@ -17,6 +18,7 @@ char menuOptions() {
     printf("1: Add a Product\n");
     printf("2: list of Products\n");
     printf("3: Search Product\n");
+    printf("4: Save Product File\n");
     printf("0: Exit\n");
     printf("Choose an option: ");
     
@@ -24,6 +26,8 @@ char menuOptions() {
 
     return option;
 }
+
+
 
 void addProduct(Product wareHouse[], int *total)
 {
@@ -97,6 +101,51 @@ void searchProduct(Product warehouse[], int total){
     }
 }
 
+void saveFile(Product warehouse[], int total){
+    char fullPath[64];
+    char saveName[54];
+    int searchId = 0;
+    int found = 0;
+    listProducts(warehouse,total);
+    printf("Choose a product ID to save");
+
+    printf("\nEnter ID to search: ");
+    if (scanf("%d", &searchId) != 1) {
+        // This handles it if the user accidentally types a letter instead of a number
+        while (getchar() != '\n'); 
+        printf("Invalid ID format!\n");
+        return;
+    }
+    while (getchar() != '\n');
+
+    for (int i = 0; i < total; i++){
+        if(warehouse[i].id == searchId){
+            strcpy(saveName, warehouse[i].name);
+            found = 1;
+            strcat(saveName, ".dat");
+
+            //save the .bat on foder "Products"
+            strcpy(fullPath, "Products/");
+            strcat(fullPath, saveName);
+
+            FILE *fp = fopen(fullPath, "wb");
+
+             if(fp == NULL) {
+                printf("Error opening file!\n");
+                return;
+            }
+            fwrite(&warehouse[i], sizeof(Product), 1, fp);
+            fclose(fp);
+            printf("\nProduct saved to %s successfully!\n", fullPath);
+
+            break;
+        }
+    }
+    if(!found){
+            printf("\nProduct with ID: %d not Found.\n", searchId);
+        }
+}
+
 int main() {
     int totalProducts = 0;
     int option;
@@ -108,13 +157,13 @@ int main() {
                 addProduct(warehouse, &totalProducts);
                 break;
             case '2':
-                printf("\nA Exiting system... GoodBye!\n");
-                break;
-            case '3':
                     listProducts(warehouse, totalProducts);
                     break;
-            case '4':
+            case '3':
                 searchProduct(warehouse, totalProducts);
+                break;
+            case '4': 
+                saveFile(warehouse, totalProducts);
                 break;
             case '0':
                 printf("\nExiting system... GoodBye!\n");
