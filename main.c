@@ -127,14 +127,11 @@ void saveFile(Product warehouse[], int total)
     printf("\nEnter ID to search: ");
     if (scanf("%d", &searchId) != 1)
     {
-        // This handles it if the user accidentally types a letter instead of a number
-        while (getchar() != '\n')
-            ;
+        while (getchar() != '\n');
         printf("Invalid ID format!\n");
         return;
     }
-    while (getchar() != '\n')
-        ;
+    while (getchar() != '\n');
 
     for (int i = 0; i < total; i++)
     {
@@ -142,20 +139,19 @@ void saveFile(Product warehouse[], int total)
         {
             strcpy(saveName, warehouse[i].name);
             found = 1;
-            strcat(saveName, ".dat");
+            strcat(saveName, ".csv");
 
-            // save the .bat on foder "Products"
             strcpy(fullPath, "Products/");
             strcat(fullPath, saveName);
 
-            FILE *fp = fopen(fullPath, "wb");
+            FILE *fp = fopen(fullPath, "w");
 
             if (fp == NULL)
             {
                 printf("Error opening file!\n");
                 return;
             }
-            fwrite(&warehouse[i], sizeof(Product), 1, fp);
+            fprintf(fp, "%d;%s;%d;%.2f\n", warehouse[i].id, warehouse[i].name, warehouse[i].stock, warehouse[i].price);
             fclose(fp);
             printf("\nProduct saved to %s successfully!\n", fullPath);
 
@@ -164,7 +160,6 @@ void saveFile(Product warehouse[], int total)
     }
     if (!found)
     {
-        listProducts(warehouse, total);
         printf("\nProduct with ID: %d not Found.\n", searchId);
     }
 }
@@ -178,9 +173,9 @@ void loadProductFile(Product warehouse[], int *total)
 
     strcpy(fullPath, "Products/");
     strcat(fullPath, loadName);
-    strcat(fullPath, ".dat");
+    strcat(fullPath, ".csv");
 
-    FILE *fp = fopen(fullPath, "rb");
+    FILE *fp = fopen(fullPath, "r");
 
     if (fp == NULL)
     {
@@ -188,7 +183,7 @@ void loadProductFile(Product warehouse[], int *total)
         return;
     }
 
-    fread(&warehouse[*total], sizeof(Product), 1, fp);
+    fscanf(fp, "%d;%49[^;];%d;%f", &warehouse[*total].id, warehouse[*total].name, &warehouse[*total].stock, &warehouse[*total].price);
     warehouse[*total].id = *total + 1;
     fclose(fp);
     (*total)++;
