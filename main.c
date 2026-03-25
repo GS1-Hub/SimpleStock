@@ -20,6 +20,7 @@ char menuOptions() {
     printf("3: Search Product\n");
     printf("4: Save Product File\n");
     printf("5: Load Product File\n");
+    printf("6: Edit Product\n");
     printf("0: Exit\n");
     printf("Choose an option: ");
     
@@ -143,6 +144,7 @@ void saveFile(Product warehouse[], int total){
         }
     }
     if(!found){
+            listProducts(warehouse,total);
             printf("\nProduct with ID: %d not Found.\n", searchId);
         }
 }
@@ -170,7 +172,43 @@ void loadProductFile(Product warehouse[], int *total){
     (*total)++;
     printf("Product loaded successfully!\n");
 }
+void editProduct(Product warehouse[], int *total)
+{
+    int searchId;
 
+    listProducts(warehouse, *total);
+    printf("Enter Product ID that you want edit\n");
+    if (scanf("%d", &searchId) != 1) {
+        // This handles it if the user accidentally types a letter instead of a number
+        while (getchar() != '\n'); 
+        printf("Invalid ID format!\n");
+        return;
+    }
+    while (getchar() != '\n');
+
+    for(int i = 0; i < *total; i++){
+        if(warehouse[i].id == searchId)
+        {
+            printf("\nEdit Product: %s\n", warehouse[i].name);
+
+            printf("Introduce new name: ");
+            scanf("%49s", &warehouse[i].name);
+
+            printf("Introduce new stock: ");
+            scanf("%d", &warehouse[i].stock);
+
+            printf("Introduce new Price: ");
+            scanf("%d", &warehouse[i].price);
+
+            printf("\nProduct updated successfully!\n");
+            printf("ID: %d | Name: %s | Stock: %d | Price %.2f\n",
+            warehouse[i].id, warehouse[i].name, warehouse[i].stock, warehouse[i].price);
+            return;
+        }
+        printf("\nProduct with ID %d not found.\n", searchId);
+    }
+
+}
 int main() {
     int totalProducts = 0;
     int option;
@@ -192,6 +230,9 @@ int main() {
                 break;
             case '5': 
                 loadProductFile(warehouse, &totalProducts);
+                break;
+            case '6': 
+                editProduct(warehouse, &totalProducts);
                 break;
             case '0':
                 printf("\nExiting system... GoodBye!\n");
