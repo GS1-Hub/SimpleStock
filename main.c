@@ -3,7 +3,8 @@
 
 #define MAX_PRODUCTS 100
 
-typedef struct {
+typedef struct
+{
     int id;
     char name[50];
     int stock;
@@ -12,28 +13,28 @@ typedef struct {
 
 Product warehouse[MAX_PRODUCTS];
 
-char menuOptions() {
+char menuOptions()
+{
     int option;
-    printf("\n--- STOCK MANAGEMENT SYSTEM ---\n"); 
+    printf("\n--- STOCK MANAGEMENT SYSTEM ---\n");
     printf("1: Add a Product\n");
     printf("2: list of Products\n");
     printf("3: Search Product\n");
     printf("4: Save Product File\n");
     printf("5: Load Product File\n");
     printf("6: Edit Product\n");
+    printf("7: Delete Product\n");
     printf("0: Exit\n");
     printf("Choose an option: ");
-    
-    scanf(" %c", &option); 
+
+    scanf(" %c", &option);
 
     return option;
 }
 
-
-
 void addProduct(Product wareHouse[], int *total)
 {
-    if(*total < MAX_PRODUCTS)
+    if (*total < MAX_PRODUCTS)
     {
         printf("\n---Adding Product to Slot %d ---\n", *total);
 
@@ -41,7 +42,7 @@ void addProduct(Product wareHouse[], int *total)
 
         printf("Enter Product Name: ");
         scanf(" %s", &wareHouse[*total].name);
-        
+
         printf("Enter Product Stock: ");
         scanf(" %d", &wareHouse[*total].stock);
 
@@ -49,7 +50,7 @@ void addProduct(Product wareHouse[], int *total)
         scanf(" %f", &wareHouse[*total].price);
 
         printf("\n Product saved sucessfully\n");
-        printf("ID: %d\n", *total*1);
+        printf("ID: %d\n", *total * 1);
         printf("Name: %s\n", wareHouse[*total].name);
         printf("Stock: %d\n", wareHouse[*total].stock);
         printf("Price: %.2f\n", wareHouse[*total].price);
@@ -57,82 +58,100 @@ void addProduct(Product wareHouse[], int *total)
 
         (*total)++;
     }
-    else {
+    else
+    {
         printf("\nError: WareHouse is full\n");
     }
 }
 
-void listProducts(Product warehouse[], int total){
-    if(total == 0){
+void listProducts(Product warehouse[], int total)
+{
+    if (total == 0)
+    {
         printf("\nWarehouse is empty\n");
         return;
     }
 
     printf("\n--- CURRENT INVENTORY ---");
-    for (int i = 0; i < total; i++){
-        printf("\nSlot %d | ID: %d | Name: %-10s | Stock: %d | Price: $%.2f\n", 
-       i, warehouse[i].id, warehouse[i].name, warehouse[i].stock, warehouse[i].price);
+    for (int i = 0; i < total; i++)
+    {
+        printf("\nSlot %d | ID: %d | Name: %-10s | Stock: %d | Price: $%.2f\n",
+               i, warehouse[i].id, warehouse[i].name, warehouse[i].stock, warehouse[i].price);
     }
     printf("--------------------------\n");
 }
 
-void searchProduct(Product warehouse[], int total){
+void searchProduct(Product warehouse[], int total)
+{
     int searchId;
     int found = 0;
 
     printf("\nEnter ID to search: ");
-    if (scanf("%d", &searchId) != 1) {
+    if (scanf("%d", &searchId) != 1)
+    {
         // This handles it if the user accidentally types a letter instead of a number
-        while (getchar() != '\n'); 
+        while (getchar() != '\n')
+            ;
         printf("Invalid ID format!\n");
         return;
     }
-    while (getchar() != '\n');
+    while (getchar() != '\n')
+        ;
 
-    for (int i = 0; i < total; i++){
-        if(warehouse[i].id == searchId){
+    for (int i = 0; i < total; i++)
+    {
+        if (warehouse[i].id == searchId)
+        {
             printf("\nProduct Found!");
             printf("\n Name: %s | Stock: %d | Price: %.2f \n", warehouse[i].name, warehouse[i].stock, warehouse[i].price);
             found = 1;
             break;
         }
 
-        if(!found){
+        if (!found)
+        {
             printf("\nProduct with ID: %d not Found.\n", searchId);
         }
     }
 }
 
-void saveFile(Product warehouse[], int total){
+void saveFile(Product warehouse[], int total)
+{
     char fullPath[64];
     char saveName[54];
     int searchId = 0;
     int found = 0;
-    listProducts(warehouse,total);
+    listProducts(warehouse, total);
     printf("Choose a product ID to save");
 
     printf("\nEnter ID to search: ");
-    if (scanf("%d", &searchId) != 1) {
+    if (scanf("%d", &searchId) != 1)
+    {
         // This handles it if the user accidentally types a letter instead of a number
-        while (getchar() != '\n'); 
+        while (getchar() != '\n')
+            ;
         printf("Invalid ID format!\n");
         return;
     }
-    while (getchar() != '\n');
+    while (getchar() != '\n')
+        ;
 
-    for (int i = 0; i < total; i++){
-        if(warehouse[i].id == searchId){
+    for (int i = 0; i < total; i++)
+    {
+        if (warehouse[i].id == searchId)
+        {
             strcpy(saveName, warehouse[i].name);
             found = 1;
             strcat(saveName, ".dat");
 
-            //save the .bat on foder "Products"
+            // save the .bat on foder "Products"
             strcpy(fullPath, "Products/");
             strcat(fullPath, saveName);
 
             FILE *fp = fopen(fullPath, "wb");
 
-             if(fp == NULL) {
+            if (fp == NULL)
+            {
                 printf("Error opening file!\n");
                 return;
             }
@@ -143,12 +162,14 @@ void saveFile(Product warehouse[], int total){
             break;
         }
     }
-    if(!found){
-            listProducts(warehouse,total);
-            printf("\nProduct with ID: %d not Found.\n", searchId);
-        }
+    if (!found)
+    {
+        listProducts(warehouse, total);
+        printf("\nProduct with ID: %d not Found.\n", searchId);
+    }
 }
-void loadProductFile(Product warehouse[], int *total){
+void loadProductFile(Product warehouse[], int *total)
+{
     char loadName[50];
     char fullPath[64];
 
@@ -161,12 +182,13 @@ void loadProductFile(Product warehouse[], int *total){
 
     FILE *fp = fopen(fullPath, "rb");
 
-     if(fp == NULL){
+    if (fp == NULL)
+    {
         printf("Error: file not found!\n");
         return;
     }
 
-    fread(&warehouse[*total], sizeof(Product), 1, fp); 
+    fread(&warehouse[*total], sizeof(Product), 1, fp);
     warehouse[*total].id = *total + 1;
     fclose(fp);
     (*total)++;
@@ -177,17 +199,21 @@ void editProduct(Product warehouse[], int *total)
     int searchId;
 
     listProducts(warehouse, *total);
-    printf("Enter Product ID that you want edit\n");
-    if (scanf("%d", &searchId) != 1) {
+    printf("Enter Product ID that you want to edit\n");
+    if (scanf("%d", &searchId) != 1)
+    {
         // This handles it if the user accidentally types a letter instead of a number
-        while (getchar() != '\n'); 
+        while (getchar() != '\n')
+            ;
         printf("Invalid ID format!\n");
         return;
     }
-    while (getchar() != '\n');
+    while (getchar() != '\n')
+        ;
 
-    for(int i = 0; i < *total; i++){
-        if(warehouse[i].id == searchId)
+    for (int i = 0; i < *total; i++)
+    {
+        if (warehouse[i].id == searchId)
         {
             printf("\nEdit Product: %s\n", warehouse[i].name);
 
@@ -202,51 +228,98 @@ void editProduct(Product warehouse[], int *total)
 
             printf("\nProduct updated successfully!\n");
             printf("ID: %d | Name: %s | Stock: %d | Price %.2f\n",
-            warehouse[i].id, warehouse[i].name, warehouse[i].stock, warehouse[i].price);
+                   warehouse[i].id, warehouse[i].name, warehouse[i].stock, warehouse[i].price);
             return;
         }
         printf("\nProduct with ID %d not found.\n", searchId);
     }
-
 }
-int main() {
+void deleteProduct(Product warehouse[], int *total)
+{
+    int searchId;
+
+    listProducts(warehouse, *total);
+    printf("Enter Product ID that you want to delete\n");
+    if (scanf("%d", &searchId) != 1)
+    {
+        // This handles it if the user accidentally types a letter instead of a number
+        while (getchar() != '\n')
+            ;
+        printf("Invalid ID format!\n");
+        return;
+    }
+    while (getchar() != '\n')
+        ;
+
+    for (int i = 0; i < *total; i++)
+    {
+        if (warehouse[i].id == searchId)
+        {
+            printf("\nAre you sure you want to delete %s? (y/n): ", warehouse[i].name);
+            char confirm;
+            scanf(" %c", &confirm);
+            if (confirm == 'y' || confirm == 'Y')
+            {
+                for (int j = i; j < *total - 1; j++)
+                {
+                    warehouse[j] = warehouse[j + 1];
+                }
+                (*total)--;
+                printf("Product deleted successfully!\n");
+            }
+            else
+            {
+                printf("Delete cancelled.\n");
+            }
+            return;
+        }
+    }
+}
+int main()
+{
     int totalProducts = 0;
     int option;
-    do {
+    do
+    {
         option = menuOptions();
 
-        switch (option) {
-            case '1':
-                addProduct(warehouse, &totalProducts);
-                break;
-            case '2':
-                    listProducts(warehouse, totalProducts);
-                    break;
-            case '3':
-                searchProduct(warehouse, totalProducts);
-                break;
-            case '4': 
-                saveFile(warehouse, totalProducts);
-                break;
-            case '5': 
-                loadProductFile(warehouse, &totalProducts);
-                break;
-            case '6': 
-                editProduct(warehouse, &totalProducts);
-                break;
-            case '0':
-                printf("\nExiting system... GoodBye!\n");
-                break;
-            default:
-                printf("\nOption '%c' wrong! Try Again.\n", option);
-                break;
+        switch (option)
+        {
+        case '1':
+            addProduct(warehouse, &totalProducts);
+            break;
+        case '2':
+            listProducts(warehouse, totalProducts);
+            break;
+        case '3':
+            searchProduct(warehouse, totalProducts);
+            break;
+        case '4':
+            saveFile(warehouse, totalProducts);
+            break;
+        case '5':
+            loadProductFile(warehouse, &totalProducts);
+            break;
+        case '6':
+            editProduct(warehouse, &totalProducts);
+            break;
+        case '7':
+            deleteProduct(warehouse, &totalProducts);
+            break;
+        case '0':
+            printf("\nExiting system... GoodBye!\n");
+            break;
+        default:
+            printf("\nOption '%c' wrong! Try Again.\n", option);
+            break;
         }
 
     } while (option != '0');
 
     printf("\nExiting system... Press Enter to close.");
     int c;
-    while((c = getchar()) != '\n' && c != EOF);
+    while ((c = getchar()) != '\n' && c != EOF)
+        ;
     getchar();
 
     return 0;
